@@ -2,7 +2,7 @@
 
 ## A Post‑Hoc Discovery, Guided by My Own Brain
 
-I did not set out to build a cognitive model. I set out to build a writing tool that would not frustrate me. I am a sysadmin with 25 years of experience, not a neuroscientist. I have no CS degree, no formal training in HCI, and no interest in academic theories. I only know what breaks, what annoys me, and what feels natural.
+I did not set out to build a cognitive model. I set out to build a writing tool that would not frustrate me. I am a sysadmin with 25 years of experience, not a neuroscientist. I have no CS degree, no formal training in HCI, and no extensive knowledge in academic theories. I only know what breaks, what annoys me, and what feels natural.
 
 As I built Thought OS, I followed the guidance of my own brain. I asked: *"How I remember without searching inside my head"* *“What would I want?”* *“What would make me forget I am using software?”* *“How can I make the tool disappear?”* 
 
