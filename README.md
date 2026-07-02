@@ -225,56 +225,48 @@ College in Virginia, looked up one of the more obscure Latin words,
 ```mermaid
 %% No forced text colors. Let Mermaid use its defaults.
 %% Boxes have dark borders, white/light fills.
-
-
 flowchart LR
     subgraph Client["Your Machine (Stateless Runtime)"]
         direction TB
-        APP["Thought OS<br>(stateless interpreter)"]
-        HW["Hardware Fingerprint<br>(derived at runtime, never stored)"]
+        APP["Thought OS\n(stateless interpreter)"]
+        HW["Hardware Fingerprint\n(derived at runtime, never stored)"]
     end
-
     subgraph Registry["Registry Layer (State)"]
         direction TB
-        NOTEBOOK_REG["Notebook Registry (notebooks_registry.json)<br>maps system fingerprint →<br>notebook path + vault name + entry UUID"]
-        VAULT_REG["Vault Registry (vaults_registry.json)<br>maps vault name → vault file path/URL"]
+        NOTEBOOK_REG["Notebook Registry (notebooks_registry.json)\nmaps system fingerprint →\nnotebook path + vault name + entry UUID"]
+        VAULT_REG["Vault Registry (vaults_registry.json)\nmaps vault name → vault file path/URL"]
     end
-
     subgraph Storage["Storage Layer (State)"]
         direction TB
-        VAULT["Vault File (.vault)<br>entry UUID → encrypted keys"]
-        NOTEBOOK["Notebook Data (folder)<br>structure.json, notes.json, ...<br>encrypted content + Git history"]
+        VAULT["Vault File (.vault)\nentry UUID → encrypted keys"]
+        NOTEBOOK["Notebook Data (folder)\nstructure.json, notes.json, ...\nencrypted content + Git history"]
     end
-
     subgraph Remote["Sync / Backup (Optional)"]
         direction TB
-        GITHUB["GitHub / GitLab / Self-Hosted<br>(any Git remote)"]
+        GITHUB["GitHub / GitLab / Self‑Hosted\n(any Git remote)"]
+        subgraph SyncProcess["UUID‑Level History Reconstruction"]
+            direction TB
+            COMMIT_LOCAL["1. Local commits grouped by UUID\n(each commit changes exactly one UUID)"]
+            COMMIT_REMOTE["2. Remote commits grouped by UUID"]
+            COMPARE["3. For each UUID:\ncompare last commit timestamp"]
+            KEEP["4. Keep chain with newer timestamp\nDiscard the other chain entirely"]
+            COLLECT["5. Collect all winning commits\nfrom all UUIDs"]
+            SORT["6. Sort by original timestamp"]
+            ORPHAN["7. Create orphan branch\n(new root, no parent)"]
+            REBUILD["8. Rebuild history by replaying commits\nin timestamp order"]
+            REPLACE["9. Replace original branch\nwith reconstructed history"]
+            NO_MERGE["Result: linear history\nno merge commits, no conflicts"]
+            COMMIT_LOCAL --> COMPARE
+            COMMIT_REMOTE --> COMPARE
+            COMPARE --> KEEP
+            KEEP --> COLLECT
+            COLLECT --> SORT
+            SORT --> ORPHAN
+            ORPHAN --> REBUILD
+            REBUILD --> REPLACE
+            REPLACE --> NO_MERGE
+        end
     end
-
-    subgraph SyncProcess["UUID-Level History Reconstruction"]
-        direction TB
-        COMMIT_LOCAL["1. Local commits grouped by UUID<br>(each commit changes exactly one UUID)"]
-        COMMIT_REMOTE["2. Remote commits grouped by UUID"]
-        COMPARE["3. For each UUID:<br>compare last commit timestamp"]
-        KEEP["4. Keep chain with newer timestamp<br>Discard the other chain entirely"]
-        COLLECT["5. Collect all winning commits<br>from all UUIDs"]
-        SORT["6. Sort by original timestamp"]
-        ORPHAN["7. Create orphan branch<br>(new root, no parent)"]
-        REBUILD["8. Rebuild history by replaying commits<br>in timestamp order"]
-        REPLACE["9. Replace original branch<br>with reconstructed history"]
-        NO_MERGE["Result: linear history<br>no merge commits, no conflicts"]
-
-        COMMIT_LOCAL --> COMPARE
-        COMMIT_REMOTE --> COMPARE
-        COMPARE --> KEEP
-        KEEP --> COLLECT
-        COLLECT --> SORT
-        SORT --> ORPHAN
-        ORPHAN --> REBUILD
-        REBUILD --> REPLACE
-        REPLACE --> NO_MERGE
-    end
-
     APP -->|"1. reads system fingerprint"| NOTEBOOK_REG
     NOTEBOOK_REG -->|"2. returns notebook path + vault name + entry UUID"| APP
     APP -->|"3. looks up vault name"| VAULT_REG
@@ -287,7 +279,6 @@ flowchart LR
     GITHUB -->|"git pull"| NOTEBOOK
     NOTEBOOK -.-> SyncProcess
     GITHUB -.-> SyncProcess
-
     style Client fill:#FFFFFF,stroke:#333,stroke-width:2px
     style Registry fill:#FFFFFF,stroke:#333,stroke-width:2px
     style Storage fill:#FFFFFF,stroke:#333,stroke-width:2px
@@ -368,5 +359,3 @@ chmod 700 thought_os.py
 git clone https://github.com/sjyotis/thought-os.git && cd thought-os && python3 thought_os.py
 ```
 `email : thought-os@protonmail.com`
-
-
